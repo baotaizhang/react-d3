@@ -8,25 +8,22 @@ var Arc = require('./Arc');
 module.exports = React.createClass({
 
   displayName: 'DataSeries',
-  
+
   propTypes: {
     transform: React.PropTypes.string,
     data: React.PropTypes.array,
     innerRadius: React.PropTypes.number,
-    radius: React.PropTypes.number,
-    colors: React.PropTypes.func
+    radius: React.PropTypes.number
   },
 
   getDefaultProps() {
     return {
       innerRadius: 0,
-      data: [],
-      colors: d3.scale.category20c()
+      data: []
     };
   },
 
   render() {
-
     var props = this.props;
 
     var pie = d3.layout
@@ -38,16 +35,13 @@ module.exports = React.createClass({
     var arcs = arcData.map((arc, i) => {
       return (
         <Arc
+          key={i}
           startAngle={arc.startAngle}
           endAngle={arc.endAngle}
-          outerRadius={props.radius}
           innerRadius={props.innerRadius}
-          labelTextFill={props.labelTextFill}
-          valueTextFill={props.valueTextFill}
-          fill={props.colors(i)}
+          outerRadius={props.radius}
           label={props.labels[i]}
           value={props.data[i]}
-          key={i}
           width={props.width}
         />
       );

@@ -9,21 +9,14 @@ module.exports = React.createClass({
   displayName: 'Arc',
 
   propTypes: {
-    fill: React.PropTypes.string,
     d: React.PropTypes.string,
     startAngle: React.PropTypes.number,
     endAngle: React.PropTypes.number,
     innerRadius: React.PropTypes.number,
     outerRadius: React.PropTypes.number,
-    labelTextFill: React.PropTypes.string,
-    valueTextFill: React.PropTypes.string
-  },
-
-  getDefaultProps() {
-    return {
-      labelTextFill: 'black',
-      valueTextFill: 'white'
-    };
+    label: React.PropTypes.string,
+    value: React.PropTypes.number,
+    width: React.PropTypes.number
   },
 
   render() {
@@ -42,46 +35,30 @@ module.exports = React.createClass({
     var y      = -dist * Math.cos(angle);
     var t = `translate(${x},${y})`;
 
+    var percentage = props.percentage;
+    console.log("CENTROID: ", arc.centroid());
+
     return (
-      <g className='rd3-piechart-arc' >
-        <path
+      <g className='rd3-piechart-arc'>
+        <path className={props.label + ' arc'}
           d={arc()}
-          fill={props.fill}
         />
-        <line
-          x1='0'
-          x2='0'
-          y1={-radius - 2}
-          y2={-radius - 26}
-          stroke={props.labelTextFill}
-          transform={rotate}
-          style={{
-            'fill': props.labelTextFill,
-            'strokeWidth': 2
-          }}
-        >
-        </line>
-        <text
-          className='rd3-piechart-label'
-          transform={t}
-          dy='.35em'
-          style={{
-            'textAnchor': 'middle',
-            'fill': props.labelTextFill,
-            'shapeRendering': 'crispEdges'
-          }}>
-          {props.label}
-        </text>
+        <circle
+          className='r3-piechart-circle'
+          cx={arc.centroid()[0]}
+          cy={arc.centroid()[1]}
+          r='0.65em'
+        />
         <text
           className='rd3-piechart-text'
           transform={`translate(${arc.centroid()})`}
           dy='.35em'
           style={{
             'shapeRendering': 'crispEdges',
-            'textAnchor': 'middle',
-            'fill': props.valueTextFill
-          }}>
-          {props.value + '%'}
+            'textAnchor': 'middle'
+          }}
+        >
+        {percentage ? props.value + '%' : props.value}
         </text>
       </g>
     );
