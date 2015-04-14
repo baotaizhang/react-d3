@@ -3,8 +3,6 @@
 var React = require('react');
 var d3 = require('d3');
 var AxisTicks = require('./AxisTicks');
-var AxisLine = require('./AxisLine');
-var Label = require('./Label');
 
 
 module.exports = React.createClass({
@@ -16,7 +14,6 @@ module.exports = React.createClass({
     xOrient: React.PropTypes.oneOf(['top', 'bottom']),
     xScale: React.PropTypes.func.isRequired,
     height: React.PropTypes.number.isRequired,
-    fill: React.PropTypes.string,
     stroke: React.PropTypes.string,
     tickStroke: React.PropTypes.string,
     strokeWidth: React.PropTypes.string,
@@ -26,11 +23,8 @@ module.exports = React.createClass({
   getDefaultProps() {
     return {
       xAxisClassName: 'x axis',
-      xAxisLabelOffset: 10,
       xOrient: 'bottom',
-      fill: 'none',
       stroke: 'none',
-      tickStroke: '#000',
       strokeWidth: 'none',
       xAxisOffset: 0,
       label: ''
@@ -39,7 +33,6 @@ module.exports = React.createClass({
 
   render() {
     var props = this.props;
-
     var t = `translate(0,${props.xAxisOffset + props.height})`;
 
     var tickArguments;
@@ -56,11 +49,14 @@ module.exports = React.createClass({
         className={props.xAxisClassName}
         transform={t}
       >
-        <Label
-          label={props.xAxisLabel}
-          offset={props.xAxisLabelOffset}
+        <AxisTicks
+          tickFormatting={props.tickFormatting}
+          tickArguments={tickArguments}
+          tickStroke={props.tickStroke}
+          tickTextStroke={props.tickTextStroke}
+          innerTickSize={props.tickSize}
+          scale={props.xScale}
           orient={props.xOrient}
-          width={props.width}
         />
       </g>
     );

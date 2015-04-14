@@ -8,6 +8,7 @@ module.exports = React.createClass({
 
   propTypes: {
     data: React.PropTypes.object,
+    total: React.PropTypes.number,
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     availableHeight: React.PropTypes.number,
@@ -30,6 +31,7 @@ module.exports = React.createClass({
 
       return (
         <rect
+          key={i}
           width={props.width}
           height={height}
           x={props.offset}
@@ -38,8 +40,17 @@ module.exports = React.createClass({
         />
       );
     });
+
     return (
       <g>
+        <circle
+          className='r3-bar-circle'
+          cx={props.offset}
+          cy={cumulativeHeight + 20}
+          r='10px'
+        >
+          <text>{props.total}</text>
+        </circle>
         {barSeries}
       </g>
     );

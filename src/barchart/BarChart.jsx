@@ -44,11 +44,13 @@ module.exports = React.createClass({
     var labels = _.pluck(props.data, 'label');
     var values = _.pluck(props.data, 'value');
     var valueTotals = _.pluck(props.data, 'total');
-    var xAxisHeight = 40;
+    var xAxisHeight = 20;
+    var totalsHeight = 20;
+    var chartHeight = props.height - (xAxisHeight + totalsHeight);
 
     var yScale = d3.scale.linear()
       .domain([d3.min([d3.min(valueTotals), 0]), d3.max(valueTotals)])
-      .range([0, props.height]);
+      .range([0, chartHeight]);
 
     var xScale = d3.scale.ordinal()
       .domain(labels)
@@ -62,23 +64,23 @@ module.exports = React.createClass({
       >
         <g className='rd3-barchart'>
           <DataSeries
-            values={values}
-            yScale={yScale}
-            xScale={yScale}
             data={props.data}
+            values={values}
             width={props.width}
-            height={props.height}
+            height={chartHeight + totalsHeight}
+            xScale={xScale}
+            yScale={yScale}
+            totalsHeight={totalsHeight}
           />
         </g>
         <XAxis
           data={props.data}
           width={props.width}
-          height={xAxisHeight}
-          xAxisClassName='rd3-barchart-xaxis'
+          height={props.height - xAxisHeight}
           xScale={xScale}
           xAxisLabel={props.xAxisLabel}
-          xAxisLabelOffset={props.xAxisLabelOffset}
-          tickFormatting={props.xAxisFormatter}
+          xAxisOffset={0}
+          xAxisClassName='rd3-barchart-xaxis'
         />
       </Chart>
     );

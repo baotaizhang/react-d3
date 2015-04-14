@@ -6,7 +6,7 @@ var d3 = require('d3');
 module.exports = React.createClass({
 
   displayName: 'AxisTick',
-  
+
   propTypes: {
     scale: React.PropTypes.func.isRequired,
     orient: React.PropTypes.oneOf(['top','bottom','left','right']).isRequired,
@@ -18,6 +18,7 @@ module.exports = React.createClass({
     tickFormat: React.PropTypes.func,
     tickStroke: React.PropTypes.string
   },
+
   getDefaultProps() {
     return {
       innerTickSize: 6,
@@ -102,9 +103,7 @@ module.exports = React.createClass({
       <g>
         {ticks.map( (tick, i) => {
           return (
-            <g key={i} className="tick" transform={tr(tick)} >
-              <line style={{shapeRendering:'crispEdges',opacity:'1',stroke:props.tickStroke}} x2={x2} y2={y2} >
-              </line>
+            <g key={i} className="tick" transform={tr(tick)}>
               <text
                 strokeWidth="0.01"
                 dy={dy} x={x1} y={y1}
@@ -115,8 +114,7 @@ module.exports = React.createClass({
               </text>
             </g>
           );
-          })
-        }
+        })}
       </g>
     );
   }

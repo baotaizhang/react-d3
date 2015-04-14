@@ -15,6 +15,7 @@ module.exports = React.createClass({
   displayName: 'DataSeries',
 
   propTypes: {
+    data: React.PropTypes.array,
     values: React.PropTypes.arrayOf(React.PropTypes.objects),
     width: React.PropTypes.number,
     height: React.PropTypes.number,
@@ -41,6 +42,7 @@ module.exports = React.createClass({
         <Bar
           key={i}
           data={valObj}
+          total={props.data[i].total}
           width={xScale.rangeBand()}
           height={props.yScale(0) + props.yScale(_.sum(_.values(valObj)))}
           availableHeight={props.height}
