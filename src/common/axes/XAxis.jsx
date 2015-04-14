@@ -6,10 +6,11 @@ var AxisTicks = require('./AxisTicks');
 var AxisLine = require('./AxisLine');
 var Label = require('./Label');
 
+
 module.exports = React.createClass({
 
   displayName: 'XAxis',
-  
+
   propTypes: {
     xAxisClassName: React.PropTypes.string.isRequired,
     xOrient: React.PropTypes.oneOf(['top', 'bottom']),
@@ -45,7 +46,7 @@ module.exports = React.createClass({
     if (typeof props.xAxisTickCount !== 'undefined') {
       tickArguments = [props.xAxisTickCount];
     }
-    
+
     if (typeof props.xAxisTickInterval !== 'undefined') {
       tickArguments = [d3.time[props.xAxisTickInterval.unit], props.xAxisTickInterval.interval];
     }
@@ -59,24 +60,7 @@ module.exports = React.createClass({
           label={props.xAxisLabel}
           offset={props.xAxisLabelOffset}
           orient={props.xOrient}
-          margins={props.margins}
           width={props.width}
-        />
-        <AxisTicks
-          tickFormatting={props.tickFormatting}
-          tickArguments={tickArguments}
-          tickStroke={props.tickStroke}
-          tickTextStroke={props.tickTextStroke}
-          innerTickSize={props.tickSize}
-          scale={props.xScale}
-          orient={props.xOrient}
-        />
-        <AxisLine
-          scale={props.xScale}
-          stroke={props.stroke}
-          orient={props.xOrient}
-          outerTickSize={props.tickSize}
-          {...props}
         />
       </g>
     );

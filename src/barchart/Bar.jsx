@@ -1,13 +1,16 @@
 'use strict';
 
 var React = require('react');
+var _ = require('lodash');
+
 
 module.exports = React.createClass({
 
   propTypes: {
-    fill: React.PropTypes.string,
+    data: React.PropTypes.object,
     width: React.PropTypes.number,
     height: React.PropTypes.number,
+    availableHeight: React.PropTypes.number,
     offset: React.PropTypes.number
   },
 
@@ -18,15 +21,27 @@ module.exports = React.createClass({
   },
 
   render() {
+    var props = this.props;
+    var cumulativeHeight = 0;
+
+    var barSeries = _.map(_.values(props.data), (datum, i) => {
+      var height = props.height > 0 ? props.height * (datum / _.sum(_.values(props.data))) : 0;
+      cumulativeHeight += height;
+
+      return (
+        <rect
+          width={props.width}
+          height={height}
+          x={props.offset}
+          y={props.availableHeight - cumulativeHeight}
+          className={'rd3-barchart-bar ' + _.keys(props.data)[i]}
+        />
+      );
+    });
     return (
-      <rect
-        fill={this.props.fill}
-        width={this.props.width}
-        height={this.props.height}
-        x={this.props.offset}
-        y={this.props.availableHeight  - this.props.height}
-        className='rd3-barchart-bar'
-      />
+      <g>
+        {barSeries}
+      </g>
     );
   }
 });

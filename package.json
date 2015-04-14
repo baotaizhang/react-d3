@@ -53,6 +53,7 @@
   "dependencies": {
     "d3": "^3.5.0",
     "immstruct": "^1.4.0",
+    "lodash": "^3.6.0",
     "react": "^0.13.1"
   },
   "scripts": {
@@ -63,7 +64,12 @@
   },
   "browserify": {
     "transform": [
-      ["reactify", { "es6": true } ]
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ]
     ]
   },
   "repository": {

@@ -36,7 +36,6 @@ module.exports = React.createClass({
     var t = `translate(${x},${y})`;
 
     var percentage = props.percentage;
-    console.log("CENTROID: ", arc.centroid());
 
     return (
       <g className='rd3-piechart-arc'>
