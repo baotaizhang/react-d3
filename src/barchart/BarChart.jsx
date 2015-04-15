@@ -16,6 +16,10 @@ var CartesianChartPropsMixin = mixins.CartesianChartPropsMixin;
  * Additional props are handled via the CartesianChartPropsMixin
  */
 
+var XAXIS_HEIGHT = 20;
+var TOTALS_HEIGHT = 20;
+var TOTALS_PADDING = 10;
+var PADDING = 0.1;
 
 module.exports = React.createClass({
 
@@ -44,9 +48,7 @@ module.exports = React.createClass({
     var labels = _.pluck(props.data, 'label');
     var values = _.pluck(props.data, 'value');
     var valueTotals = _.pluck(props.data, 'total');
-    var xAxisHeight = 20;
-    var totalsHeight = 20;
-    var chartHeight = props.height - (xAxisHeight + totalsHeight);
+    var chartHeight = props.height - (XAXIS_HEIGHT + TOTALS_HEIGHT + TOTALS_PADDING);
 
     var yScale = d3.scale.linear()
       .domain([d3.min([d3.min(valueTotals), 0]), d3.max(valueTotals)])
@@ -60,23 +62,22 @@ module.exports = React.createClass({
       <Chart
         title={props.title}
         width={props.width}
-        height={props.height + xAxisHeight}
+        height={props.height + XAXIS_HEIGHT}
       >
         <g className='rd3-barchart'>
           <DataSeries
             data={props.data}
             values={values}
             width={props.width}
-            height={chartHeight + totalsHeight}
-            xScale={xScale}
+            height={chartHeight + TOTALS_HEIGHT + TOTALS_PADDING}
             yScale={yScale}
-            totalsHeight={totalsHeight}
+            totalsHeight={TOTALS_HEIGHT}
           />
         </g>
         <XAxis
           data={props.data}
           width={props.width}
-          height={props.height - xAxisHeight}
+          height={props.height - XAXIS_HEIGHT}
           xScale={xScale}
           xAxisLabel={props.xAxisLabel}
           xAxisOffset={0}

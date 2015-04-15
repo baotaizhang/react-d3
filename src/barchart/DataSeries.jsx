@@ -20,6 +20,9 @@ module.exports = React.createClass({
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     padding: React.PropTypes.number,
+    totalsHeight: React.PropTypes.number,
+    totalsPadding: React.PropTypes.number,
+    xScale: React.PropTypes.func,
     yScale: React.PropTypes.func
   },
 
@@ -46,6 +49,7 @@ module.exports = React.createClass({
           width={xScale.rangeBand()}
           height={props.yScale(0) + props.yScale(_.sum(_.values(valObj)))}
           availableHeight={props.height}
+          totalHeight={props.totalsHeight}
           offset={xScale(i)}
         />
       );

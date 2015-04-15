@@ -4,6 +4,8 @@ var React = require('react');
 var _ = require('lodash');
 
 
+var TOTAL_RADIUS = '10px';
+
 module.exports = React.createClass({
 
   propTypes: {
@@ -12,6 +14,7 @@ module.exports = React.createClass({
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     availableHeight: React.PropTypes.number,
+    totalHeight: React.PropTypes.number,
     offset: React.PropTypes.number
   },
 
@@ -24,6 +27,7 @@ module.exports = React.createClass({
   render() {
     var props = this.props;
     var cumulativeHeight = 0;
+    var totalAvailableHeight
 
     var barSeries = _.map(_.values(props.data), (datum, i) => {
       var height = props.height > 0 ? props.height * (datum / _.sum(_.values(props.data))) : 0;
@@ -41,16 +45,26 @@ module.exports = React.createClass({
       );
     });
 
+    var totalXOffset = props.offset + (props.width / 2);
+    var totalYOffset = props.availableHeight - (cumulativeHeight + props.totalHeight);
+
     return (
       <g>
         <circle
           className='r3-bar-circle'
-          cx={props.offset}
-          cy={cumulativeHeight + 20}
-          r='10px'
-        >
-          <text>{props.total}</text>
-        </circle>
+          cx={totalXOffset}
+          cy={totalYOffset}
+          r={TOTAL_RADIUS}
+        />
+        <text
+          className='rd3-bar-text'
+          transform={`translate(${totalXOffset}, ${totalYOffset})`}
+          dy='.35em'
+          style={{
+            'shapeRendering': 'crispEdges',
+            'textAnchor': 'middle'
+          }}
+        >{props.total}</text>
         {barSeries}
       </g>
     );
