@@ -9,31 +9,29 @@ module.exports = React.createClass({
 
   propTypes: {
     data: React.PropTypes.object,
-    strokeWidth: React.PropTypes.number,
     path: React.PropTypes.string,
-    fill: React.PropTypes.string,
-    stroke: React.PropTypes.string
+    strokeWidth: React.PropTypes.number
   },
 
   getDefaultProps() {
     return {
-      stroke: '#1f77b4',
-      strokeWidth: 1.5,
-      fill: 'none',
-      className: 'rd3-linechart-path'
+      strokeWidth: 1.5
     };
   },
 
   getInitialState() {
     // state for animation usage
     return {
-      lineStrokeWidth: this.props.strokeWidth,
-      lineStroke: this.props.stroke
+      lineStrokeWidth: this.props.strokeWidth
     };
   },
 
   componentDidMount() {
     var props = this.props;
+
+    // TODO(fw): ???
+    // Also see below. What is use-case for line width being state?
+
     // The circle reference is observed when both it is set to
     // active, and to inactive, so we have to check which one
     var unobserve = props.voronoiSeriesRef.observe(() => {
@@ -51,27 +49,26 @@ module.exports = React.createClass({
   },
 
   _animateLine(id) {
-    this.setState({ 
+    this.setState({
       lineStrokeWidth: this.state.lineStrokeWidth * 1.8
     });
   },
 
   _restoreLine(id) {
-    this.setState({ 
+    this.setState({
       lineStrokeWidth: this.props.strokeWidth
     });
   },
 
   render() {
+    console.log("PATH: ", this.props.path);
     var props = this.props;
     var state = this.state;
     return (
       <path
+        className='rd3-linechart-path'
         d={props.path}
-        stroke={state.lineStroke}
         strokeWidth={state.lineStrokeWidth}
-        fill={props.fill}
-        className={props.className}
       />
     );
   }

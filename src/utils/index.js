@@ -1,4 +1,5 @@
 var d3 = require('d3');
+var _ = require('lodash');
 
 
 exports.calculateScales = (chartWidth, chartHeight, xValues, yValues) => {
@@ -31,6 +32,8 @@ exports.calculateScales = (chartWidth, chartHeight, xValues, yValues) => {
 
 };
 
+// TODO(fw): Replace cases of this method w/lodash
+
 // debounce from Underscore.js
 // MIT License: https://raw.githubusercontent.com/jashkenas/underscore/master/LICENSE
 // Copyright (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative
@@ -52,63 +55,59 @@ exports.debounce = function(func, wait, immediate) {
   };
 };
 
-exports.flattenData = (data, xAccessor, yAccessor) => {
-
+// TODO(fw): this method was buggy, and may still be...
+exports.flattenData = (data, xAccessor, yAccessor, xAxisIsDates=false) => {
   var allValues = [];
   var xValues = [];
   var yValues = [];
   var coincidentCoordinateCheck = {};
 
-  data.forEach( (series) => {
-    series.values.forEach( (item, idx) => {
+  _.each(data, (series) => {
+    _.each(series.values, (item, idx) => {
+      // (fw): this will support dates, but will always
+      // consider x-axis values by day
+      var x = xAxisIsDates ?
+        parseInt(xAccessor(item).split('/')[1], 10) : xAccessor(item);
+      var y = yAccessor(item);
+      var yNode;
 
-      var x = xAccessor(item);
-
-      // Check for NaN since d3's Voronoi cannot handle NaN values
-      // Go ahead and Proceed to next iteration since we don't want NaN
-      // in allValues or in xValues or yValues
+      // d3's Voronoi cannot handle NaN values
       if (isNaN(x)) {
         return;
       }
       xValues.push(x);
 
-      var y = yAccessor(item);
-      // when yAccessor returns an object (as in the case of candlestick)
-      // iterate over the keys and push all the values to yValues array
-      var yNode;
-      if (typeof y === 'object' && Object.keys(y).length > 0) {
-        Object.keys(y).forEach(function (key) {
-          // Check for NaN since d3's Voronoi cannot handle NaN values
-          // Go ahead and Proceed to next iteration since we don't want NaN
-          // in allValues or in xValues or yValues
+      // Handle case where yAccessor returns an object (as in candlestick)
+      if (_.isObject(y) && _.keys(y).length > 0) {
+        _.each(_.keys(y), (key) => {
+          // d3's Voronoi cannot handle NaN values
           if (isNaN(y[key])) {
             return;
           }
+
           yValues.push(y[key]);
-          // if multiple y points are to be plotted for a single x
-          // as in the case of candlestick, default to y value of 0
+          // Handle candlestick, where multiple y points are to be plotted for a single x
           yNode = 0;
         });
       } else {
-        // Check for NaN since d3's Voronoi cannot handle NaN values
-        // Go ahead and Proceed to next iteration since we don't want NaN
-        // in allValues or in xValues or yValues
         if (isNaN(y)) {
           return;
         }
+
         yValues.push(y);
         yNode = y;
       }
 
       var xyCoords = `${ x }-${ yNode }`;
+
       if (xyCoords in coincidentCoordinateCheck) {
-        // Proceed to next iteration if the x y pair already exists
-        // d3's Voronoi cannot handle NaN values or coincident coords
-        // But we push them into xValues and yValues above because
-        // we still may handle them there (labels, etc.)
+        // d3's Voronoi cannot handle coincident coords
         return;
       }
+
+      // TODO(fw): is this necessary?
       coincidentCoordinateCheck[xyCoords] = '';
+
       var pointItem = {
         coord: {
           x: x,

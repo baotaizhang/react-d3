@@ -8,34 +8,31 @@ module.exports = React.createClass({
   displayName: 'Circle',
 
   propTypes: {
+    id: React.PropTypes.string,
     cx: React.PropTypes.number,
     cy: React.PropTypes.number,
-    r: React.PropTypes.number,
-    fill: React.PropTypes.string
-  },
-
-  getDefaultProps() {
-    return {
-      fill: '#1f77b4',
-      className: 'rd3-linechart-circle'
-    };
+    r: React.PropTypes.number
   },
 
   getInitialState() {
     // state for animation usage
     return {
-      circleRadius: this.props.r,
-      circleColor: this.props.fill
+      circleRadius: this.props.r
     };
   },
 
   componentDidMount() {
     var props = this.props;
+
+    // TODO(fw): Again?? See Line.jsx.
+    // Also, again, circleRadius in state?
+
     // The circle reference is observed when both it is set to
     // active, and to inactive, so we have to check which one
     var unobserve = props.voronoiRef.observe(() => {
       var circleStatus = props.voronoiRef.cursor().deref();
       var seriesName = props.id.split('-')[0];
+
       if (circleStatus === 'active') {
         this._animateCircle(props.id);
         props.structure.cursor('voronoiSeries').cursor(seriesName).update(()=>'active');
@@ -50,30 +47,29 @@ module.exports = React.createClass({
     this.props.voronoiRef.destroy();
   },
 
-  render() {
-    var props = this.props;
-    return (
-      <circle
-        cx={props.cx}
-        cy={props.cy}
-        r={this.state.circleRadius}
-        fill={this.state.circleColor}
-        id={props.id}
-        className={props.className}
-      />
-    );
-  },
-  
   _animateCircle(id) {
-    this.setState({ 
+    this.setState({
       circleRadius: this.state.circleRadius * ( 5 / 4 )
     });
   },
 
   _restoreCircle(id) {
-    this.setState({ 
+    this.setState({
       circleRadius: this.props.r
     });
-  }
+  },
 
+  render() {
+    var props = this.props;
+
+    return (
+      <circle
+        className='rd3-linechart-circle'
+        id={props.id}
+        cx={props.cx}
+        cy={props.cy}
+        r={this.state.circleRadius}
+      />
+    );
+  }
 });

@@ -13,6 +13,14 @@ var DataSeries = require('./DataSeries');
 var mixins = require('../mixins');
 var CartesianChartPropsMixin = mixins.CartesianChartPropsMixin;
 
+/*
+ * If you're using dates for the x-axis values pass 'xAxisIsDates',
+ * and make sure that each data object's x value is either a Date() or moment() object
+ * or moment-parsable date string with format "MM/DD/YYYY".
+ * ....support for differently formatted dates will likely be an ongoing process.
+ * ???(fw): do we want to keep accessor methods (d.x, d.y) as props, or
+ * just define as d.x and d.y
+ */
 
 module.exports = React.createClass({
 
@@ -21,90 +29,66 @@ module.exports = React.createClass({
   displayName: 'LineChart',
 
   propTypes: {
-    margins: React.PropTypes.object,
-    pointRadius: React.PropTypes.number,
-    colors: React.PropTypes.func,
+    data: React.PropTypes.arrayOf(React.PropTypes.object),
+    xAxisIsDates: React.PropTypes.bool,
     displayDataPoints: React.PropTypes.bool,
+    pointRadius: React.PropTypes.number,
     hoverAnimation: React.PropTypes.bool
   },
 
   getDefaultProps() {
     return {
-      margins: {top: 10, right: 20, bottom: 40, left: 45},
-      className: 'rd3-linechart',
       pointRadius: 3,
       interpolate: false,
       interpolationType: null,
-      displayDataPoints: true,
-      hoverAnimation: true
+      displayDataPoints: false,
+      hoverAnimation: false
     };
   },
 
   render() {
-
-    var structure = immstruct('lineChart', { voronoi: {}, voronoiSeries: {}});
-
     var props = this.props;
 
+    var structure = immstruct('lineChart', { voronoi: {}, voronoiSeries: {}});
     var interpolationType = props.interpolationType || (props.interpolate ? 'cardinal' : 'linear');
 
-    // Calculate inner chart dimensions
-    var innerWidth, innerHeight;
+    var flattenedData = utils.flattenData(props.data, props.xAccessor, props.yAccessor, props.xAxisIsDates);
 
-    innerWidth = props.width - props.margins.left - props.margins.right;
-    innerHeight = props.height - props.margins.top - props.margins.bottom;
+    var allValues = flattenedData.allValues;
+    var xValues = flattenedData.xValues;
+    var yValues = flattenedData.yValues;
 
-    if (props.legend) {
-      innerWidth = innerWidth - props.legendOffset;
-    }
-
-    if (!Array.isArray(props.data)) {
-      props.data = [props.data];
-    }
-
-    var flattenedData = utils.flattenData(props.data, props.xAccessor, props.yAccessor);
-
-    var allValues = flattenedData.allValues,
-        xValues = flattenedData.xValues,
-        yValues = flattenedData.yValues;
-
-    var scales = utils.calculateScales(innerWidth, innerHeight, xValues, yValues);
-
-    var trans = `translate(${ props.margins.left },${ props.margins.top })`;
+    var scales = utils.calculateScales(props.width, props.height, xValues, yValues);
 
     var dataSeriesArray = props.data.map( (series, idx) => {
       return (
           <DataSeries
-            structure={structure}
-            xScale={scales.xScale}
-            yScale={scales.yScale}
+            key={series.name}
             seriesName={series.name}
             data={series.values}
-            width={innerWidth}
-            height={innerHeight}
-            fill={props.colors(idx)}
-            pointRadius={props.pointRadius}
-            key={series.name}
+            structure={structure}
+            width={props.width}
+            height={props.height}
+            xScale={scales.xScale}
+            yScale={scales.yScale}
             xAccessor={props.xAccessor}
             yAccessor={props.yAccessor}
-            interpolationType={interpolationType}
+            xAxisIsDates={props.xAxisIsDates}
             displayDataPoints={props.displayDataPoints}
+            pointRadius={props.pointRadius}
+            interpolationType={interpolationType}
           />
       );
     });
 
     return (
       <Chart
-        viewBox={props.viewBox}
-        legend={props.legend}
         data={props.data}
-        margins={props.margins}
-        colors={props.colors}
+        viewBox={props.viewBox}
         width={props.width}
         height={props.height}
-        title={props.title}
       >
-        <g transform={trans} className={props.className}>
+        <g className='rd3-linechart'>
           {dataSeriesArray}
           {props.hoverAnimation ? <Voronoi
             structure={structure}
@@ -116,30 +100,27 @@ module.exports = React.createClass({
           /> : <g/> }
           <XAxis
             xAxisClassName='rd3-linechart-xaxis'
-            tickFormatting={props.xAxisFormatter}
+            width={props.width}
+            height={props.height}
+            xScale={scales.xScale}
+            xOrient={props.xOrient}
             xAxisLabel={props.xAxisLabel}
             xAxisLabelOffset={props.xAxisLabelOffset}
             xAxisTickCount={props.xAxisTickCount}
-            xOrient={props.xOrient}
-            xScale={scales.xScale}
-            margins={props.margins}
-            width={innerWidth}
-            height={innerHeight}
-            stroke={props.axesColor}
+            tickFormatting={props.xAxisFormatter}
+            xAxisIsDates={props.xAxisIsDates}
             strokeWidth={props.strokeWidth}
           />
           <YAxis
             yAxisClassName='rd3-linechart-yaxis'
-            tickFormatting={props.yAxisFormatter}
+            width={innerWidth}
+            height={innerHeight}
+            yScale={scales.yScale}
+            yOrient={props.yOrient}
             yAxisLabel={props.yAxisLabel}
             yAxisLabelOffset={props.yAxisLabelOffset}
             yAxisTickCount={props.yAxisTickCount}
-            yScale={scales.yScale}
-            yOrient={props.yOrient}
-            margins={props.margins}
-            width={innerWidth}
-            height={innerHeight}
-            stroke={props.axesColor}
+            tickFormatting={props.yAxisFormatter}
           />
         </g>
       </Chart>
