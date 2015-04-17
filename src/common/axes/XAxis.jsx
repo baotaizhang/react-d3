@@ -26,8 +26,7 @@ module.exports = React.createClass({
       xOrient: 'bottom',
       stroke: 'none',
       strokeWidth: 'none',
-      xAxisOffset: 0,
-      label: ''
+      xAxisOffset: 0
     };
   },
 
@@ -51,6 +50,7 @@ module.exports = React.createClass({
       >
         <AxisTicks
           tickFormatting={props.tickFormatting}
+          tickValues={props.tickValues}
           tickArguments={tickArguments}
           tickStroke={props.tickStroke}
           tickTextStroke={props.tickTextStroke}

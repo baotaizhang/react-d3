@@ -2,143 +2,101 @@
 
 var React = require('react');
 var d3 = require('d3');
-var DataSeries = require('./DataSeries');
+var _ = require('lodash');
 var common = require('../common');
 var Chart = common.Chart;
 var XAxis = common.XAxis;
 var YAxis = common.YAxis;
-var mixins = require('../mixins');
-var CartesianChartPropsMixin = mixins.CartesianChartPropsMixin;
+var DataSeries = require('./DataSeries');
+var CartesianChartPropsMixin = require('../mixins').CartesianChartPropsMixin;
 
+var XAXIS_HEIGHT = 40;
+var CHART_PADDING = 0.1;
 
 module.exports = React.createClass({
 
   mixins: [ CartesianChartPropsMixin ],
-  
+
   displayName: 'AreaChart',
 
   propTypes: {
-    margins: React.PropTypes.object
- },
+    data: React.PropTypes.arrayOf(React.PropTypes.object)
+  },
 
   getDefaultProps() {
     return {
-      margins: {top: 10, right: 20, bottom: 40, left: 45},
-      yAxisTickCount: 4,
-      className: 'rd3-areachart'
+      xAxisTickInterval: {unit: 'day', interval: 1}
     };
   },
 
   render() {
-
     var props = this.props;
-
-    // Calculate inner chart dimensions
-    var innerWidth, innerHeight;
-    innerWidth = props.width - props.margins.left - props.margins.right;
-    innerHeight = props.height - props.margins.top - props.margins.bottom;
-
-    if (props.legend) {
-      innerWidth = innerWidth - props.legendOffset;
-    }
-
-    if (!Array.isArray(props.data)) {
-      props.data = [props.data];
-    }
-
-    var yScale = d3.scale.linear()
-      .range([innerHeight, 0]);
 
     var xValues = [];
     var yValues = [];
-    var seriesNames = [];
-    props.data.forEach( (series) => {
-      seriesNames.push(series.name);
-      series.values.forEach((val, idx) => {
+
+    _.each(props.data, (series) => {
+      _.each(series.values, (val, idx) => {
         xValues.push(props.xAccessor(val));
         yValues.push(props.yAccessor(val));
       });
     });
 
-    var xScale;
-    if (xValues.length > 0 && Object.prototype.toString.call(xValues[0]) === '[object Date]' && props.xAxisTickInterval) {
-      xScale = d3.time.scale()
-        .range([0, innerWidth]);
-    } else {
-      xScale = d3.scale.linear()
-        .range([0, innerWidth]);
-    }
+    var xScale = xValues.length > 0 && _.isDate(xValues[0]) ?
+      d3.time.scale().range([0, props.width]) : d3.scale.linear().range([0, props.width]);
 
-    xScale.domain(d3.extent(xValues));
+    // Chart needs to allow room for x-axis labels
+    var maxChartHeight = props.height - XAXIS_HEIGHT;
+    var yScale = d3.scale.linear().range([maxChartHeight, 0]);
+
+    xScale.domain(d3.extent(xValues), CHART_PADDING);
     yScale.domain(d3.extent(yValues));
 
-    props.colors.domain(seriesNames);
-
+    // TODO(fw): not 100% sure about the necessity of the
+    // offset and order
     var stack = d3.layout.stack()
       .x(props.xAccessor)
       .y(props.yAccessor)
-      .offset('expand')
-      .order('reverse')
-      .values((d)=> { return d.values; });
+      .offset('zero')
+      .order('default')
+      .values((d) => {
+        return d.values;
+      });
 
     var layers = stack(props.data);
 
-    var trans = `translate(${ props.margins.left },${ props.margins.top })`;
-
     var dataSeries = layers.map( (d, idx) => {
       return (
-          <DataSeries
-            key={idx}
-            name={d.name}
-            colors={props.colors}
-            index={idx}
-            xScale={xScale}
-            yScale={yScale}
-            data={d.values}
-            xAccessor={props.xAccessor}
-            yAccessor={props.yAccessor}
-          />
-        );
-      });
+        <DataSeries
+          key={idx}
+          index={idx}
+          data={d.values}
+          xScale={xScale}
+          yScale={yScale}
+          xAccessor={props.xAccessor}
+          yAccessor={props.yAccessor}
+        />
+      );
+    });
 
     return (
       <Chart
         viewBox={props.viewBox}
-        legend={props.legend}
         data={props.data}
-        margins={props.margins}
-        colors={props.colors}
         width={props.width}
         height={props.height}
-        title={props.title}
       >
-        <g transform={trans} className={props.className}>
+        <g className='rd3-areachart'>
           {dataSeries}
           <XAxis
-            xAxisClassName='rd3-areachart-xaxis'
+            width={props.width}
+            height={props.height - XAXIS_HEIGHT}
             xScale={xScale}
-            xAxisTickInterval={props.xAxisTickInterval}
-            xAxisTickCount={props.xAxisTickCount}
             xAxisLabel={props.xAxisLabel}
-            xAxisLabelOffset={props.xAxisLabelOffset}
+            xAxisOffset={0}
+            xAxisTickInterval={props.xAxisTickInterval}
             tickFormatting={props.xAxisFormatter}
-            xOrient={props.xOrient}
-            margins={props.margins}
-            width={innerWidth}
-            height={innerHeight}
-          />
-          <YAxis
-            yAxisClassName='rd3-areachart-yaxis'
-            yScale={yScale}
-            yAxisTickInterval={props.yAxisTickInterval}
-            yAxisTickCount={props.yAxisTickCount}
-            yAxisLabel={props.yAxisLabel}
-            yAxisLabelOffset={props.yAxisLabelOffset}
-            tickFormatting={props.yAxisFormatter}
-            yOrient={props.yOrient}
-            margins={props.margins}
-            width={innerWidth}
-            height={props.height}
+            xAxisClassName='rd3-areachart-xaxis'
           />
         </g>
       </Chart>

@@ -2,30 +2,24 @@
 
 var React = require('react');
 
+
 module.exports = React.createClass({
 
   displayName: 'Area',
 
   propTypes: {
-    path: React.PropTypes.string,
-    fill: React.PropTypes.string
-  },
-
-  getDefaultProps() {
-    return {
-      fill: '#3182bd'
-    };
+    path: React.PropTypes.string
   },
 
   render() {
+    var props = this.props;
 
     return (
       <path
         className="rd3-areachart-area"
-        d={this.props.path}
-        fill={this.props.fill}
+        d={props.path}
+        strokeWidth={2}
       />
     );
   }
-
 });

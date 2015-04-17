@@ -19,7 +19,6 @@ var CartesianChartPropsMixin = mixins.CartesianChartPropsMixin;
 var XAXIS_HEIGHT = 20;
 var TOTALS_HEIGHT = 20;
 var TOTALS_PADDING = 10;
-var PADDING = 0.1;
 
 module.exports = React.createClass({
 
