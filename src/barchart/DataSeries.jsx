@@ -16,7 +16,7 @@ module.exports = React.createClass({
 
   propTypes: {
     data: React.PropTypes.array,
-    values: React.PropTypes.arrayOf(React.PropTypes.objects),
+    values: React.PropTypes.arrayOf(React.PropTypes.object),
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     padding: React.PropTypes.number,

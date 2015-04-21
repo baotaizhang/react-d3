@@ -30,7 +30,7 @@ module.exports = React.createClass({
   _renderLegend() {
     if (this.props.legend) {
       return (
-        <Legend 
+        <Legend
           legendPosition={this.props.legendPosition}
           margins={this.props.margins}
           colors={this.props.colors}
@@ -38,7 +38,7 @@ module.exports = React.createClass({
           width={this.props.width}
           height={this.props.height}
           sideOffset={this.props.sideOffset}
-        /> 
+        />
       );
     }
   },
@@ -46,7 +46,6 @@ module.exports = React.createClass({
   render() {
     return (
       <div style={{'width': this.props.width, 'height': this.props.height}} >
-        <h4>{this.props.title}</h4>
         {this._renderLegend()}
         <svg viewBox={this.props.viewBox} width={this.props.width - this.props.sideOffset} height={this.props.height}>{this.props.children}</svg>
       </div>

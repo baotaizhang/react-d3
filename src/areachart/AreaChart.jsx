@@ -11,7 +11,7 @@ var DataSeries = require('./DataSeries');
 var CartesianChartPropsMixin = require('../mixins').CartesianChartPropsMixin;
 
 var XAXIS_HEIGHT = 40;
-var CHART_PADDING = 0.1;
+var XAXIS_PADDING = 10;
 
 module.exports = React.createClass({
 
@@ -43,13 +43,13 @@ module.exports = React.createClass({
     });
 
     var xScale = xValues.length > 0 && _.isDate(xValues[0]) ?
-      d3.time.scale().range([0, props.width]) : d3.scale.linear().range([0, props.width]);
+      d3.time.scale().range([0, props.width - XAXIS_PADDING]) : d3.scale.linear().range([0, props.width]);
 
     // Chart needs to allow room for x-axis labels
     var maxChartHeight = props.height - XAXIS_HEIGHT;
     var yScale = d3.scale.linear().range([maxChartHeight, 0]);
 
-    xScale.domain(d3.extent(xValues), CHART_PADDING);
+    xScale.domain(d3.extent(xValues));
     yScale.domain(d3.extent(yValues));
 
     // TODO(fw): not 100% sure about the necessity of the
@@ -93,7 +93,7 @@ module.exports = React.createClass({
             height={props.height - XAXIS_HEIGHT}
             xScale={xScale}
             xAxisLabel={props.xAxisLabel}
-            xAxisOffset={0}
+            xAxisLeftOffset={5}
             xAxisTickInterval={props.xAxisTickInterval}
             tickFormatting={props.xAxisFormatter}
             xAxisClassName='rd3-areachart-xaxis'

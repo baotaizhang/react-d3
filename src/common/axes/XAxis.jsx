@@ -17,7 +17,8 @@ module.exports = React.createClass({
     stroke: React.PropTypes.string,
     tickStroke: React.PropTypes.string,
     strokeWidth: React.PropTypes.string,
-    xAxisOffset: React.PropTypes.number
+    xAxisOffset: React.PropTypes.number,
+    xAxisLeftOffset: React.PropTypes.number
   },
 
   getDefaultProps() {
@@ -26,13 +27,14 @@ module.exports = React.createClass({
       xOrient: 'bottom',
       stroke: 'none',
       strokeWidth: 'none',
-      xAxisOffset: 0
+      xAxisOffset: 0,
+      xAxisLeftOffset: 0
     };
   },
 
   render() {
     var props = this.props;
-    var t = `translate(0,${props.xAxisOffset + props.height})`;
+    var t = `translate(${props.xAxisLeftOffset},${props.xAxisOffset + props.height})`;
 
     var tickArguments;
     if (typeof props.xAxisTickCount !== 'undefined') {
