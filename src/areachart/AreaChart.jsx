@@ -91,10 +91,10 @@ module.exports = React.createClass({
           {dataSeries}
           <XAxis
             width={props.width}
-            height={props.height - XAXIS_HEIGHT}
+            height={props.height - (XAXIS_HEIGHT + XAXIS_PADDING)}
             xScale={xScale}
             xAxisLabel={props.xAxisLabel}
-            xAxisLeftOffset={5}
+            xAxisLeftOffset={0}
             xAxisTickInterval={props.xAxisTickInterval}
             tickFormatting={props.xAxisFormatter}
             xAxisClassName='rd3-areachart-xaxis'
