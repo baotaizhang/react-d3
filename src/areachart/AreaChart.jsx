@@ -12,6 +12,7 @@ var CartesianChartPropsMixin = require('../mixins').CartesianChartPropsMixin;
 
 var XAXIS_HEIGHT = 40;
 var XAXIS_PADDING = 10;
+var YAXIS_PADDING = 10;
 
 module.exports = React.createClass({
 
@@ -46,7 +47,7 @@ module.exports = React.createClass({
       d3.time.scale().range([0, props.width - XAXIS_PADDING]) : d3.scale.linear().range([0, props.width]);
 
     // Chart needs to allow room for x-axis labels
-    var maxChartHeight = props.height - XAXIS_HEIGHT;
+    var maxChartHeight = props.height - (XAXIS_HEIGHT + YAXIS_PADDING);
     var yScale = d3.scale.linear().range([maxChartHeight, 0]);
 
     xScale.domain(d3.extent(xValues));
