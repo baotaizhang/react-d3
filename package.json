@@ -2,7 +2,9 @@
   "name": "react-d3",
   "version": "0.3.0",
   "description": "ReactJS charts using d3",
-  "author": "Eric S. Bullington",
+  "author": {
+    "name": "Eric S. Bullington"
+  },
   "homepage": "http://esbullington.github.io/react-d3-website/",
   "keywords": [
     "d3",
@@ -14,6 +16,8 @@
   "license": "MIT",
   "main": "src/index.js",
   "devDependencies": {
+    "babel": "5.2.6",
+    "babelify": "6.0.2",
     "browser-sync": "^2.0.1",
     "browserify": "~8.1.3",
     "browserify-global-shim": "^1.0.0",
@@ -44,7 +48,6 @@
     "merge-stream": "^0.1.7",
     "mocha": "^2.1.0",
     "react-tools": "^0.12.2",
-    "reactify": "^1.0.0",
     "uglify-js": "^2.4.16",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0",
@@ -60,20 +63,28 @@
     "env": "env",
     "test": "gulp test",
     "watch": "gulp watch",
-    "minified": "gulp release && npm run build && NODE_ENV=production browserify -t [ reactify --es6 ] --standalone rd3 ./build/cjs/index.js | uglifyjs -c > dist/public/js/react-d3.min.js"
+    "minified": "gulp release && npm run build && NODE_ENV=production browserify --standalone rd3 ./build/cjs/index.js | uglifyjs -c > dist/public/js/react-d3.min.js",
+    "start": "node server.js"
   },
   "browserify": {
     "transform": [
       [
-        "reactify",
-        {
-          "es6": true
-        }
+        "babelify"
       ]
     ]
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/esbullington/react-d3.git"
-  }
+  },
+  "readme": "## react-d3\nModular ReactJS charts made using d3 chart utilities. Work on project documentation has started [here](https://github.com/esbullington/react-d3/wiki). A few examples of the available charts can be seen below, the others can be [viewed here](http://esbullington.github.io/react-d3-website), side-by-side with the React code that generates the charts.\n\n![react-d3 chart images](https://raw.githubusercontent.com/esbullington/react-d3-website/gh-pages/img/multiseries.png)\n\n**Caution:**  alpha state software. Chart APIs will change. Breaking changes will occur at each minor (0.x) release, until we reach version 1.0.  At that point, we'll closely follow the [semver](http://semver.org/) specification.\n\n[![Build Status](https://travis-ci.org/esbullington/react-d3.svg?branch=master)](https://travis-ci.org/esbullington/react-d3)\n\n### Version\n[![npm version](https://badge.fury.io/js/react-d3.png)](https://www.npmjs.com/package/react-d3)\n\n### Basic usage\n\nFirst, install via `npm`:\n\n`npm install react-d3`\n\nThen, import into your ReactJS project:\n\n`var rd3 = require('react-d3');`\n\nThe charts are then available under the `rd3` namespace, which you can then use as shown on the [demonstration page](http://esbullington.github.io/react-d3-website/):\n\nIf you don't wish to pull in all the charts, you can also require single chart:\n\n`var BarChart = require('react-d3/barchart').BarChart;`\n\n### Available Charts\n\n```\nvar BarChart = rd3.BarChart;\nvar LineChart = rd3.LineChart;\nvar PieChart = rd3.PieChart;\nvar AreaChart = rd3.AreaChart;\nvar Treemap = rd3.Treemap;\nvar ScatterChart = rd3.ScatterChart;\nvar CandleStickChart = rd3.CandleStickChart;\n```\n\nFor usage, please see [here](http://esbullington.github.io/react-d3-website).  API documentation is also coming online over the coming days.\n\n### JSFiddle\nThere's a development build available for experimentation on JSFiddle: [http://jsfiddle.net/esbullington/jp9dkh1g/](http://jsfiddle.net/esbullington/jp9dkh1g/).\n\nPlease note that this build should probably not be used in production, since it bundles all of react-d3's dependencies in a single bundle (this is also the cause of the \"Cannot read property 'firstChild' of undefined\" error message on the JS console, which occurs when there are two React libraries in the same namespace).\n\nAll the react-d3 charts are available in this JSFiddle fork under the global `rd3` namespace.\n\n### Support\n\n* Chat: [![Join the chat at https://gitter.im/esbullington/react-d3](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/esbullington/react-d3?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)\n* Issues: [react-d3 issues](https://github.com/esbullington/react-d3/issues) on Github\n* Support: [react-d3 Google Groups email list](https://groups.google.com/forum/#!forum/react-d3)\n\n### Background\nAlthough there have been [several](http://nicolashery.com/integrating-d3js-visualizations-in-a-react-app/) [different](http://bl.ocks.org/milroc/d22bbf92231876505e5d) approaches proposed for combining the power of d3 with the flexibility and modularity of ReactJS, the approach I'm using here was inspired by [this blog post](http://10consulting.com/2014/02/19/d3-plus-reactjs-for-charting/) by Ben Smith of [Binary Consulting](http://10consulting.com/).\n\nWith this approach, React itself is responsible for generating the SVG markup.  d3.js is used for its tremendous collection of utility functions, such as those that calculate the `path` value for various chart types.\n\n### Roadmap\n\n* v0.4.0:\n  * Additional charts types:\n    - slopegraph\n    - table\n  * Tooltips\n\n* v0.5.0:\n  * Data frame animations\n\n### Available for work\nConsider me for your next contract job.  I do:\n* custom d3 and/or React visualizations.\n* React, AngularJS, or Backbone frontend work.\n* backend work in Python(Flask, Django), Lua(w/Nginx), or Node.js, particularly REST APIs.\n\nMore at: [ericbullington.com](https://ericbullington.com)\n\n### License\nMIT\n\nCopyright (c) 2014-2015 Eric. S Bullington, Lim Yang Wei, and project [contributors](https://github.com/esbullington/react-d3/graphs/contributors)\n",
+  "readmeFilename": "README.md",
+  "gitHead": "e09f12fa5f1a2d7c5e1e1886d1c0cd1570787b3c",
+  "bugs": {
+    "url": "https://github.com/esbullington/react-d3/issues"
+  },
+  "_id": "react-d3@0.3.0",
+  "_shasum": "6640007e588b0924c1dea64026616d4a84999175",
+  "_from": "../../../../../var/folders/41/c9h_6w8x6zx_q6f8_s9lq_xm0000gn/T/npm-1732-d31c0fca/1430505866766-0.3556793285533786/e09f12fa5f1a2d7c5e1e1886d1c0cd1570787b3c",
+  "_resolved": "git://github.com/sprintly/react-d3#e09f12fa5f1a2d7c5e1e1886d1c0cd1570787b3c"
 }
